@@ -35,6 +35,20 @@ const Index = () => {
       tipoAtividade: "Atendimento",
       dataHora: new Date(),
       consentimentoLGPD: false,
+      // Valores padrão para evitar inputs não controlados
+      captacaoTipoImovel: "",
+      captacaoProprietarioNome: "",
+      captacaoProprietarioTelefone: "",
+      captacaoEnderecoImovel: "",
+      acaoVendasEmpreendimento: "",
+      treinamentoTipo: "",
+      ligacaoFoco: "",
+      atendimentoLocal: "",
+      atendimentoClienteNome: "",
+      atendimentoClienteTelefone: "",
+      atendimentoEmpreendimento: "",
+      conteudoProduto: "",
+      notas: "",
     },
   });
   
@@ -140,34 +154,88 @@ const Index = () => {
         timestamp: new Date().toISOString(),
       };
       
+      console.log("Enviando dados para webhook:", payload);
+      
       // Send to webhooks
       const webhookUrl = import.meta.env.VITE_WEBHOOK_URL;
       const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
       
       const promises = [];
+      let webhookErrors = [];
       
       if (webhookUrl) {
-        promises.push(
-          fetch(webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          })
-        );
+        const webhookPromise = fetch(webhookUrl, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+          mode: "cors",
+        })
+        .then(response => {
+          console.log("Resposta do webhook principal:", response.status);
+          if (!response.ok) {
+            throw new Error(`Webhook retornou status ${response.status}`);
+          }
+          return response;
+        })
+        .catch(error => {
+          console.error("Erro no webhook principal:", error);
+          webhookErrors.push({
+            webhook: "principal",
+            error: error.message
+          });
+          throw error;
+        });
+        
+        promises.push(webhookPromise);
       }
       
       if (n8nWebhookUrl) {
-        promises.push(
-          fetch(n8nWebhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          })
-        );
+        const n8nPromise = fetch(n8nWebhookUrl, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+          mode: "cors",
+        })
+        .then(response => {
+          console.log("Resposta do webhook N8N:", response.status);
+          if (!response.ok) {
+            throw new Error(`N8N Webhook retornou status ${response.status}`);
+          }
+          return response;
+        })
+        .catch(error => {
+          console.error("Erro no webhook N8N:", error);
+          webhookErrors.push({
+            webhook: "n8n",
+            error: error.message
+          });
+          throw error;
+        });
+        
+        promises.push(n8nPromise);
       }
       
       if (promises.length > 0) {
-        await Promise.all(promises);
+        try {
+          await Promise.all(promises);
+          console.log("Todos os webhooks responderam com sucesso");
+        } catch (error) {
+          console.error("Erro ao enviar para webhooks:", webhookErrors);
+          
+          // Mostrar erro mais detalhado
+          toast({
+            title: "Erro de conexão com o servidor",
+            description: "O webhook não está respondendo. Verifique se o servidor está online e aceita requisições CORS.",
+            variant: "destructive",
+          });
+          return;
+        }
       }
       
       toast({
@@ -177,10 +245,10 @@ const Index = () => {
       
       navigate("/obrigado");
     } catch (error) {
-      console.error("Erro ao enviar formulário:", error);
+      console.error("Erro geral ao enviar formulário:", error);
       toast({
         title: "Erro ao enviar",
-        description: "Ocorreu um erro. Tente novamente.",
+        description: "Verifique sua conexão e tente novamente.",
         variant: "destructive",
       });
     }
