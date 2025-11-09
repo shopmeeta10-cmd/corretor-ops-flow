@@ -216,6 +216,74 @@ const Index = () => {
         return !!form.watch("nome");
       case 2:
         return !!form.watch("tipoAtividade");
+      case 3: {
+        // Validate based on activity type
+        const tipoAtividade = form.watch("tipoAtividade");
+        
+        if (tipoAtividade === "Captação") {
+          const captacaoVenda = form.watch("captacaoVenda");
+          const captacaoAluguel = form.watch("captacaoAluguel");
+          const captacaoTipoImovel = form.watch("captacaoTipoImovel");
+          const captacaoProprietarioNome = form.watch("captacaoProprietarioNome");
+          const captacaoProprietarioTelefone = form.watch("captacaoProprietarioTelefone");
+          const captacaoEnderecoImovel = form.watch("captacaoEnderecoImovel");
+          
+          return (captacaoVenda || captacaoAluguel) && 
+                 !!captacaoTipoImovel && 
+                 !!captacaoProprietarioNome && 
+                 !!captacaoProprietarioTelefone && 
+                 !!captacaoEnderecoImovel;
+        }
+        
+        if (tipoAtividade === "Ação de vendas (Oferta ativa)") {
+          const acaoVendasProduto = form.watch("acaoVendasProduto");
+          if (acaoVendasProduto === "Empreendimento específico") {
+            return !!acaoVendasProduto && !!form.watch("acaoVendasEmpreendimento");
+          }
+          return !!acaoVendasProduto;
+        }
+        
+        if (tipoAtividade === "Treinamento") {
+          return !!form.watch("treinamentoTipo");
+        }
+        
+        if (tipoAtividade === "Ligação") {
+          const ligacaoQuantidade = form.watch("ligacaoQuantidade");
+          const ligacaoFoco = form.watch("ligacaoFoco");
+          return ligacaoQuantidade !== undefined && ligacaoQuantidade > 0 && !!ligacaoFoco;
+        }
+        
+        if (tipoAtividade === "Atendimento") {
+          const atendimentoTipo = form.watch("atendimentoTipo");
+          const atendimentoClienteNome = form.watch("atendimentoClienteNome");
+          const atendimentoClienteTelefone = form.watch("atendimentoClienteTelefone");
+          const atendimentoEmpreendimento = form.watch("atendimentoEmpreendimento");
+          
+          if (atendimentoTipo === "Presencial") {
+            const atendimentoLocal = form.watch("atendimentoLocal");
+            return !!atendimentoTipo && !!atendimentoLocal && 
+                   !!atendimentoClienteNome && !!atendimentoClienteTelefone && 
+                   !!atendimentoEmpreendimento;
+          }
+          
+          return !!atendimentoTipo && !!atendimentoClienteNome && 
+                 !!atendimentoClienteTelefone && !!atendimentoEmpreendimento;
+        }
+        
+        if (tipoAtividade === "Gravação de conteúdo") {
+          const conteudoTipo = form.watch("conteudoTipo");
+          const conteudoLocal = form.watch("conteudoLocal");
+          const conteudoProduto = form.watch("conteudoProduto");
+          return !!conteudoTipo && !!conteudoLocal && !!conteudoProduto;
+        }
+        
+        return true;
+      }
+      case 4:
+        return !!form.watch("dataHora");
+      case 5:
+        // Notas step - no required fields
+        return true;
       case 6:
         return form.watch("consentimentoLGPD") && !!turnstileToken;
       default:
