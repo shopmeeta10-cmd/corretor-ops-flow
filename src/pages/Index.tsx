@@ -15,7 +15,10 @@ import { StepNotas } from "@/components/wizard/steps/StepNotas";
 import { StepConfirmacao } from "@/components/wizard/steps/StepConfirmacao";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Building2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { HelpButton } from "@/components/HelpButton";
+import { Footer } from "@/components/Footer";
+import agendouLogo from "@/assets/agendou-logo.png";
 
 const TOTAL_STEPS = 7;
 
@@ -204,12 +207,6 @@ const Index = () => {
     }
   };
   
-  // Set up global Turnstile callback
-  if (typeof window !== "undefined") {
-    (window as any).onTurnstileCallback = (token: string) => {
-      setTurnstileToken(token);
-    };
-  }
   
   const canGoNext = () => {
     switch (currentStep) {
@@ -227,12 +224,18 @@ const Index = () => {
   };
   
   return (
-    <div className="min-h-screen bg-muted/30">
-      <div className="container max-w-2xl mx-auto py-12 px-4">
+    <div className="min-h-screen bg-muted/30 flex flex-col">
+      <ThemeToggle />
+      <HelpButton />
+      
+      <div className="container max-w-2xl mx-auto py-12 px-4 flex-1">
         <div className="mb-8 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Building2 className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">CorretorOps</h1>
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src={agendouLogo} 
+              alt="Agendou" 
+              className="h-32 w-auto object-contain"
+            />
           </div>
           <p className="text-muted-foreground">
             Registro de atividades para equipes de corretores
@@ -258,6 +261,8 @@ const Index = () => {
           </Form>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

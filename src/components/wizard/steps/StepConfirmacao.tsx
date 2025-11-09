@@ -26,6 +26,11 @@ declare global {
 
 export const StepConfirmacao = ({ form, onTurnstileVerify }: StepConfirmacaoProps) => {
   useEffect(() => {
+    // Set up global callback first
+    (window as any).onTurnstileCallback = (token: string) => {
+      onTurnstileVerify(token);
+    };
+
     // Load Turnstile script
     if (!document.getElementById('turnstile-script')) {
       const script = document.createElement('script');
@@ -34,8 +39,24 @@ export const StepConfirmacao = ({ form, onTurnstileVerify }: StepConfirmacaoProp
       script.async = true;
       script.defer = true;
       document.body.appendChild(script);
+    } else {
+      // If script already loaded, render widget manually
+      const checkTurnstile = setInterval(() => {
+        if (window.turnstile) {
+          clearInterval(checkTurnstile);
+          const widget = document.querySelector('.cf-turnstile');
+          if (widget && !widget.querySelector('iframe')) {
+            window.turnstile.render(widget as HTMLElement, {
+              sitekey: import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA",
+              callback: (token: string) => onTurnstileVerify(token),
+            });
+          }
+        }
+      }, 100);
+
+      return () => clearInterval(checkTurnstile);
     }
-  }, []);
+  }, [onTurnstileVerify]);
   
   return (
     <div className="space-y-6">
