@@ -49,20 +49,19 @@ export const StepAtividade = ({ form }: StepAtividadeProps) => {
                 {ACTIVITIES.map((activity) => (
                   <FormItem key={activity.value}>
                     <FormControl>
-                      <div 
+                      <label 
                         className="flex items-start space-x-3 space-y-0 rounded-lg border border-border p-4 hover:bg-muted/50 transition-colors cursor-pointer"
-                        onClick={() => field.onChange(activity.value)}
                       >
                         <RadioGroupItem value={activity.value} />
                         <div className="flex-1">
-                          <FormLabel className="font-medium cursor-pointer">
+                          <span className="font-medium cursor-pointer block">
                             {activity.label}
-                          </FormLabel>
+                          </span>
                           <p className="text-sm text-muted-foreground mt-1">
                             {activity.description}
                           </p>
                         </div>
-                      </div>
+                      </label>
                     </FormControl>
                   </FormItem>
                 ))}
