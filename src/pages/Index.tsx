@@ -41,13 +41,18 @@ const Index = () => {
       captacaoProprietarioTelefone: "",
       captacaoEnderecoImovel: "",
       acaoVendasEmpreendimento: "",
+      acaoVendasLocal: "",
+      acaoVendasMateriais: "",
       treinamentoTipo: "",
       ligacaoFoco: "",
       atendimentoLocal: "",
+      atendimentoLider: "",
       atendimentoClienteNome: "",
       atendimentoClienteTelefone: "",
       atendimentoEmpreendimento: "",
       conteudoProduto: "",
+      reuniaoPauta: "",
+      reuniaoLocal: "",
       notas: "",
     },
   });
@@ -72,23 +77,36 @@ const Index = () => {
           fieldsToValidate = ["captacaoVenda", "captacaoAluguel", "captacaoTipoImovel", 
                              "captacaoProprietarioNome", "captacaoProprietarioTelefone", 
                              "captacaoEnderecoImovel"];
-        } else if (tipoAtividade === "Ação de vendas (Oferta ativa)") {
-          fieldsToValidate = ["acaoVendasProduto"];
-          if (form.getValues("acaoVendasProduto") === "Empreendimento específico") {
-            fieldsToValidate.push("acaoVendasEmpreendimento");
+        } else if (tipoAtividade === "Ação de vendas (oferta ativa / panfletagem)") {
+          fieldsToValidate = ["acaoVendasTipo"];
+          const acaoTipo = form.getValues("acaoVendasTipo");
+          if (acaoTipo === "Oferta ativa") {
+            fieldsToValidate.push("acaoVendasProduto");
+            if (form.getValues("acaoVendasProduto") === "Empreendimento específico") {
+              fieldsToValidate.push("acaoVendasEmpreendimento");
+            }
+          } else if (acaoTipo === "Panfletagem") {
+            fieldsToValidate.push("acaoVendasLocal", "acaoVendasSolicitaLogistica");
+            if (form.getValues("acaoVendasSolicitaLogistica")) {
+              fieldsToValidate.push("acaoVendasMateriais");
+            }
           }
         } else if (tipoAtividade === "Treinamento") {
           fieldsToValidate = ["treinamentoTipo"];
         } else if (tipoAtividade === "Ligação") {
           fieldsToValidate = ["ligacaoQuantidade", "ligacaoFoco"];
         } else if (tipoAtividade === "Atendimento") {
-          fieldsToValidate = ["atendimentoTipo", "atendimentoClienteNome", 
-                             "atendimentoClienteTelefone", "atendimentoEmpreendimento"];
+          fieldsToValidate = ["atendimentoTipo", "atendimentoComLider", "atendimentoEmpreendimento"];
           if (form.getValues("atendimentoTipo") === "Presencial") {
             fieldsToValidate.push("atendimentoLocal");
           }
+          if (form.getValues("atendimentoComLider")) {
+            fieldsToValidate.push("atendimentoLider");
+          }
         } else if (tipoAtividade === "Gravação de conteúdo") {
           fieldsToValidate = ["conteudoTipo", "conteudoLocal", "conteudoProduto"];
+        } else if (tipoAtividade === "Reunião de alinhamento") {
+          fieldsToValidate = ["reuniaoPauta", "reuniaoLocal"];
         }
         break;
       case 4:
@@ -303,12 +321,27 @@ const Index = () => {
                  !!captacaoEnderecoImovel;
         }
         
-        if (tipoAtividade === "Ação de vendas (Oferta ativa)") {
-          const acaoVendasProduto = form.watch("acaoVendasProduto");
-          if (acaoVendasProduto === "Empreendimento específico") {
-            return !!acaoVendasProduto && !!form.watch("acaoVendasEmpreendimento");
+        if (tipoAtividade === "Ação de vendas (oferta ativa / panfletagem)") {
+          const acaoVendasTipo = form.watch("acaoVendasTipo");
+          if (!acaoVendasTipo) return false;
+          
+          if (acaoVendasTipo === "Oferta ativa") {
+            const acaoVendasProduto = form.watch("acaoVendasProduto");
+            if (acaoVendasProduto === "Empreendimento específico") {
+              return !!acaoVendasProduto && !!form.watch("acaoVendasEmpreendimento");
+            }
+            return !!acaoVendasProduto;
           }
-          return !!acaoVendasProduto;
+          
+          if (acaoVendasTipo === "Panfletagem") {
+            const local = form.watch("acaoVendasLocal");
+            const solicitaLogistica = form.watch("acaoVendasSolicitaLogistica");
+            if (!local || solicitaLogistica === undefined) return false;
+            if (solicitaLogistica) {
+              return !!form.watch("acaoVendasMateriais");
+            }
+            return true;
+          }
         }
         
         if (tipoAtividade === "Treinamento") {
@@ -323,19 +356,24 @@ const Index = () => {
         
         if (tipoAtividade === "Atendimento") {
           const atendimentoTipo = form.watch("atendimentoTipo");
-          const atendimentoClienteNome = form.watch("atendimentoClienteNome");
-          const atendimentoClienteTelefone = form.watch("atendimentoClienteTelefone");
+          const atendimentoComLider = form.watch("atendimentoComLider");
           const atendimentoEmpreendimento = form.watch("atendimentoEmpreendimento");
+          
+          if (!atendimentoTipo || atendimentoComLider === undefined || !atendimentoEmpreendimento) {
+            return false;
+          }
           
           if (atendimentoTipo === "Presencial") {
             const atendimentoLocal = form.watch("atendimentoLocal");
-            return !!atendimentoTipo && !!atendimentoLocal && 
-                   !!atendimentoClienteNome && !!atendimentoClienteTelefone && 
-                   !!atendimentoEmpreendimento;
+            if (!atendimentoLocal) return false;
           }
           
-          return !!atendimentoTipo && !!atendimentoClienteNome && 
-                 !!atendimentoClienteTelefone && !!atendimentoEmpreendimento;
+          if (atendimentoComLider) {
+            const atendimentoLider = form.watch("atendimentoLider");
+            if (!atendimentoLider) return false;
+          }
+          
+          return true;
         }
         
         if (tipoAtividade === "Gravação de conteúdo") {
@@ -343,6 +381,12 @@ const Index = () => {
           const conteudoLocal = form.watch("conteudoLocal");
           const conteudoProduto = form.watch("conteudoProduto");
           return !!conteudoTipo && !!conteudoLocal && !!conteudoProduto;
+        }
+        
+        if (tipoAtividade === "Reunião de alinhamento") {
+          const reuniaoPauta = form.watch("reuniaoPauta");
+          const reuniaoLocal = form.watch("reuniaoLocal");
+          return !!reuniaoPauta && !!reuniaoLocal;
         }
         
         return true;
