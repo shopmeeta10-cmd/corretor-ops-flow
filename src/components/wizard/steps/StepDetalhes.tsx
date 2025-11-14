@@ -6,6 +6,7 @@ import { TreinamentoFields } from "./details/TreinamentoFields";
 import { LigacaoFields } from "./details/LigacaoFields";
 import { AtendimentoFields } from "./details/AtendimentoFields";
 import { ConteudoFields } from "./details/ConteudoFields";
+import { ReuniaoFields } from "./details/ReuniaoFields";
 
 interface StepDetalhesProps {
   form: UseFormReturn<FormData>;
@@ -26,11 +27,12 @@ export const StepDetalhes = ({ form }: StepDetalhesProps) => {
       </div>
       
       {tipoAtividade === "Captação" && <CaptacaoFields form={form} />}
-      {tipoAtividade === "Ação de vendas (Oferta ativa)" && <AcaoVendasFields form={form} />}
+      {tipoAtividade === "Ação de vendas (oferta ativa / panfletagem)" && <AcaoVendasFields form={form} />}
       {tipoAtividade === "Treinamento" && <TreinamentoFields form={form} />}
       {tipoAtividade === "Ligação" && <LigacaoFields form={form} />}
       {tipoAtividade === "Atendimento" && <AtendimentoFields form={form} />}
       {tipoAtividade === "Gravação de conteúdo" && <ConteudoFields form={form} />}
+      {tipoAtividade === "Reunião de alinhamento" && <ReuniaoFields form={form} />}
     </div>
   );
 };

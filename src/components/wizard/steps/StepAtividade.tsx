@@ -17,9 +17,10 @@ const ACTIVITIES: { value: ActivityType; label: string; description: string }[] 
   { value: "Atendimento", label: "Atendimento", description: "Atendimento a clientes" },
   { value: "Ligação", label: "Ligação", description: "Ligações para prospects" },
   { value: "Captação", label: "Captação", description: "Captação de imóveis" },
-  { value: "Treinamento", label: "Treinamento", description: "Apenas para líderes" },
-  { value: "Ação de vendas (Oferta ativa)", label: "Ação de vendas (Oferta ativa)", description: "Apenas para líderes" },
+  { value: "Treinamento", label: "Treinamento", description: "Treinamento da equipe" },
+  { value: "Ação de vendas (oferta ativa / panfletagem)", label: "Ação de vendas (oferta ativa / panfletagem)", description: "Ações de vendas e divulgação" },
   { value: "Gravação de conteúdo", label: "Gravação de conteúdo", description: "Produção de conteúdo" },
+  { value: "Reunião de alinhamento", label: "Reunião de alinhamento", description: "Reuniões de planejamento" },
 ];
 
 export const StepAtividade = ({ form }: StepAtividadeProps) => {
@@ -48,7 +49,10 @@ export const StepAtividade = ({ form }: StepAtividadeProps) => {
                 {ACTIVITIES.map((activity) => (
                   <FormItem key={activity.value}>
                     <FormControl>
-                      <div className="flex items-start space-x-3 space-y-0 rounded-lg border border-border p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div 
+                        className="flex items-start space-x-3 space-y-0 rounded-lg border border-border p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+                        onClick={() => field.onChange(activity.value)}
+                      >
                         <RadioGroupItem value={activity.value} />
                         <div className="flex-1">
                           <FormLabel className="font-medium cursor-pointer">

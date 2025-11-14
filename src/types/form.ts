@@ -3,13 +3,15 @@ export type ActivityType =
   | "Ligação"
   | "Captação"
   | "Treinamento"
-  | "Ação de vendas (Oferta ativa)"
-  | "Gravação de conteúdo";
+  | "Ação de vendas (oferta ativa / panfletagem)"
+  | "Gravação de conteúdo"
+  | "Reunião de alinhamento";
 
-export type AtendimentoType = "Presencial" | "Online";
+export type AtendimentoType = "Presencial" | "Online" | "Em andamento";
 export type ConteudoType = "Gravação" | "Post";
 export type ConteudoLocal = "Sede" | "Externo";
 export type ProdutoType = "Geral" | "Empreendimento específico";
+export type AcaoVendasType = "Oferta ativa" | "Panfletagem";
 
 export interface FormData {
   equipe: string;
@@ -25,8 +27,12 @@ export interface FormData {
   captacaoEnderecoImovel?: string;
   
   // Ação de vendas
+  acaoVendasTipo?: AcaoVendasType;
   acaoVendasProduto?: ProdutoType;
   acaoVendasEmpreendimento?: string;
+  acaoVendasLocal?: string;
+  acaoVendasSolicitaLogistica?: boolean;
+  acaoVendasMateriais?: string;
   
   // Treinamento
   treinamentoTipo?: string;
@@ -39,6 +45,8 @@ export interface FormData {
   // Atendimento
   atendimentoTipo?: AtendimentoType;
   atendimentoLocal?: string;
+  atendimentoComLider?: boolean;
+  atendimentoLider?: string;
   atendimentoClienteNome?: string;
   atendimentoClienteTelefone?: string;
   atendimentoEmpreendimento?: string;
@@ -47,6 +55,10 @@ export interface FormData {
   conteudoTipo?: ConteudoType;
   conteudoLocal?: ConteudoLocal;
   conteudoProduto?: string;
+  
+  // Reunião de alinhamento
+  reuniaoPauta?: string;
+  reuniaoLocal?: string;
   
   // Campos gerais
   dataHora: Date;

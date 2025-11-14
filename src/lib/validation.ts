@@ -8,8 +8,9 @@ export const formSchema = z.object({
     "Ligação",
     "Captação",
     "Treinamento",
-    "Ação de vendas (Oferta ativa)",
-    "Gravação de conteúdo"
+    "Ação de vendas (oferta ativa / panfletagem)",
+    "Gravação de conteúdo",
+    "Reunião de alinhamento"
   ]),
   
   // Captação
@@ -21,8 +22,12 @@ export const formSchema = z.object({
   captacaoEnderecoImovel: z.string().optional(),
   
   // Ação de vendas
+  acaoVendasTipo: z.enum(["Oferta ativa", "Panfletagem"]).optional(),
   acaoVendasProduto: z.enum(["Geral", "Empreendimento específico"]).optional(),
   acaoVendasEmpreendimento: z.string().optional(),
+  acaoVendasLocal: z.string().optional(),
+  acaoVendasSolicitaLogistica: z.boolean().optional(),
+  acaoVendasMateriais: z.string().optional(),
   
   // Treinamento
   treinamentoTipo: z.string().optional(),
@@ -33,8 +38,10 @@ export const formSchema = z.object({
   ligacaoAnexos: z.any().optional(),
   
   // Atendimento
-  atendimentoTipo: z.enum(["Presencial", "Online"]).optional(),
+  atendimentoTipo: z.enum(["Presencial", "Online", "Em andamento"]).optional(),
   atendimentoLocal: z.string().optional(),
+  atendimentoComLider: z.boolean().optional(),
+  atendimentoLider: z.string().optional(),
   atendimentoClienteNome: z.string().optional(),
   atendimentoClienteTelefone: z.string().optional(),
   atendimentoEmpreendimento: z.string().optional(),
@@ -43,6 +50,10 @@ export const formSchema = z.object({
   conteudoTipo: z.enum(["Gravação", "Post"]).optional(),
   conteudoLocal: z.enum(["Sede", "Externo"]).optional(),
   conteudoProduto: z.string().optional(),
+  
+  // Reunião de alinhamento
+  reuniaoPauta: z.string().optional(),
+  reuniaoLocal: z.string().optional(),
   
   // Campos gerais
   dataHora: z.date(),
