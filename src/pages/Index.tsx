@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormData } from "@/types/form";
+import { type FormData } from "@/types/form";
 import { formSchema } from "@/lib/validation";
 import { Form } from "@/components/ui/form";
 import { ProgressBar } from "@/components/wizard/ProgressBar";
@@ -166,13 +166,37 @@ const Index = () => {
     
     try {
       const formData = form.getValues();
-      const payload = {
+      
+      // Prepare multipart/form-data for N8N webhook
+      const multipartData = new FormData();
+      
+      // Add all form fields as JSON string
+      const jsonData = {
         ...formData,
         cfToken: turnstileToken,
         timestamp: new Date().toISOString(),
+        // Remove file fields from JSON as they will be sent separately
+        anexos: undefined,
+        ligacaoAnexos: undefined,
       };
       
-      console.log("Enviando dados para webhook:", payload);
+      multipartData.append('data', JSON.stringify(jsonData));
+      
+      // Add image files from anexos
+      if (formData.anexos && formData.anexos.length > 0) {
+        formData.anexos.forEach((file: File, index: number) => {
+          multipartData.append(`anexo_${index}`, file, file.name);
+        });
+      }
+      
+      // Add image files from ligacaoAnexos
+      if (formData.ligacaoAnexos && formData.ligacaoAnexos.length > 0) {
+        formData.ligacaoAnexos.forEach((file: File, index: number) => {
+          multipartData.append(`ligacao_anexo_${index}`, file, file.name);
+        });
+      }
+      
+      console.log("Enviando dados para webhook");
       
       // Send to webhooks
       const webhookUrl = import.meta.env.VITE_WEBHOOK_URL;
@@ -182,6 +206,13 @@ const Index = () => {
       let webhookErrors = [];
       
       if (webhookUrl) {
+        // Send JSON to main webhook
+        const payload = {
+          ...formData,
+          cfToken: turnstileToken,
+          timestamp: new Date().toISOString(),
+        };
+        
         const webhookPromise = fetch(webhookUrl, {
           method: "POST",
           headers: { 
@@ -211,13 +242,10 @@ const Index = () => {
       }
       
       if (n8nWebhookUrl) {
+        // Send multipart/form-data to N8N webhook
         const n8nPromise = fetch(n8nWebhookUrl, {
           method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-          },
-          body: JSON.stringify(payload),
+          body: multipartData,
           mode: "cors",
         })
         .then(response => {
