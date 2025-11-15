@@ -184,15 +184,15 @@ const Index = () => {
       
       // Add image files from anexos
       if (formData.anexos && formData.anexos.length > 0) {
-        formData.anexos.forEach((file: File, index: number) => {
-          multipartData.append(`anexo_${index}`, file, file.name);
+        formData.anexos.forEach((file: File) => {
+          multipartData.append('anexos', file, file.name);
         });
       }
       
       // Add image files from ligacaoAnexos
       if (formData.ligacaoAnexos && formData.ligacaoAnexos.length > 0) {
-        formData.ligacaoAnexos.forEach((file: File, index: number) => {
-          multipartData.append(`ligacao_anexo_${index}`, file, file.name);
+        formData.ligacaoAnexos.forEach((file: File) => {
+          multipartData.append('anexos', file, file.name);
         });
       }
       

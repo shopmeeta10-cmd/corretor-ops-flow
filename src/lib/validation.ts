@@ -35,6 +35,7 @@ export const formSchema = z.object({
   // Ligação
   ligacaoQuantidade: z.number().optional(),
   ligacaoFoco: z.string().optional(),
+  ligacaoEmpreendimento: z.string().optional(),
   ligacaoAnexos: z.any().optional(),
   
   // Atendimento
