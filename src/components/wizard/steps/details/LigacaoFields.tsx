@@ -41,12 +41,30 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
         name="ligacaoFoco"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Foco: empreendimento ou produto? *</FormLabel>
+            <FormLabel>Foco *</FormLabel>
             <FormControl>
-              <Input 
-                placeholder="Ex: Residencial Jardins, Imóveis comerciais..." 
-                {...field} 
-              />
+              <div className="flex gap-4">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="Empreendimento"
+                    checked={field.value === "Empreendimento"}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="w-4 h-4"
+                  />
+                  <span>Empreendimento</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="Geral"
+                    checked={field.value === "Geral"}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="w-4 h-4"
+                  />
+                  <span>Geral</span>
+                </label>
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -60,10 +78,10 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
           <FormItem>
             <FormLabel>Anexe os números (foto da lista)</FormLabel>
             <FormControl>
-              <div className="flex items-center gap-2">
-                <label className="flex items-center gap-2 px-4 py-2 border border-input rounded-md cursor-pointer hover:bg-muted transition-colors">
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 px-4 py-2 border border-input rounded-md cursor-pointer hover:bg-muted transition-colors w-fit">
                   <Upload className="h-4 w-4" />
-                  <span className="text-sm">Escolher arquivos</span>
+                  <span className="text-sm">Escolher imagens</span>
                   <input
                     type="file"
                     multiple
@@ -77,9 +95,25 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
                   />
                 </label>
                 {value && value.length > 0 && (
-                  <span className="text-sm text-muted-foreground">
-                    {value.length} arquivo(s) selecionado(s)
-                  </span>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      {value.length} imagem(ns) selecionada(s):
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {value.map((file: File, index: number) => (
+                        <div key={index} className="relative border rounded-lg overflow-hidden aspect-square">
+                          <img 
+                            src={URL.createObjectURL(file)} 
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
+                            {file.name}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             </FormControl>

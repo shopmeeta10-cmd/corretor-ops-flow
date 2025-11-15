@@ -79,40 +79,42 @@ export const AtendimentoFields = ({ form }: AtendimentoFieldsProps) => {
         />
       )}
 
-      <FormField
-        control={form.control}
-        name="atendimentoComLider"
-        render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormLabel>Com presença do Líder? *</FormLabel>
-            <FormControl>
-              <RadioGroup
-                onValueChange={(value) => field.onChange(value === "true")}
-                value={field.value?.toString()}
-                className="flex flex-col space-y-2"
-              >
-                <FormItem className="flex items-center space-x-2 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="true" />
-                  </FormControl>
-                  <FormLabel className="font-normal cursor-pointer">
-                    Sim
-                  </FormLabel>
-                </FormItem>
-                <FormItem className="flex items-center space-x-2 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="false" />
-                  </FormControl>
-                  <FormLabel className="font-normal cursor-pointer">
-                    Não
-                  </FormLabel>
-                </FormItem>
-              </RadioGroup>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {tipoAtendimento !== "Em andamento" && (
+        <FormField
+          control={form.control}
+          name="atendimentoComLider"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Com presença do Líder? *</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={(value) => field.onChange(value === "true")}
+                  value={field.value?.toString()}
+                  className="flex flex-col space-y-2"
+                >
+                  <FormItem className="flex items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="true" />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Sim
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="false" />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Não
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       {comLider && (
         <FormField

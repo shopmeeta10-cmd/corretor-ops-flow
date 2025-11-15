@@ -17,10 +17,10 @@ const ACTIVITIES: { value: ActivityType; label: string; description: string }[] 
   { value: "Atendimento", label: "Atendimento", description: "Atendimento a clientes" },
   { value: "Ligação", label: "Ligação", description: "Ligações para prospects" },
   { value: "Captação", label: "Captação", description: "Captação de imóveis" },
-  { value: "Treinamento", label: "Treinamento", description: "Treinamento da equipe" },
+  { value: "Treinamento", label: "Treinamento", description: "Treinamento da equipe (Preenchimento dos lideres)" },
   { value: "Ação de vendas (oferta ativa / panfletagem)", label: "Ação de vendas (oferta ativa / panfletagem)", description: "Ações de vendas e divulgação" },
   { value: "Gravação de conteúdo", label: "Gravação de conteúdo", description: "Produção de conteúdo" },
-  { value: "Reunião de alinhamento", label: "Reunião de alinhamento", description: "Reuniões de planejamento" },
+  { value: "Reunião de alinhamento", label: "Reunião de alinhamento", description: "Reuniões de planejamento (Preenchimento dos lideres)" },
 ];
 
 export const StepAtividade = ({ form }: StepAtividadeProps) => {
