@@ -8,7 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface LigacaoFieldsProps {
   form: UseFormReturn<FormData>;
@@ -43,27 +44,47 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
           <FormItem>
             <FormLabel>Foco *</FormLabel>
             <FormControl>
-              <div className="flex gap-4">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="Empreendimento"
-                    checked={field.value === "Empreendimento"}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    className="w-4 h-4"
+              <div className="space-y-3">
+                <div className="flex gap-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Empreendimento"
+                      checked={field.value === "Empreendimento"}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-4 h-4"
+                    />
+                    <span>Empreendimento</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Geral"
+                      checked={field.value === "Geral"}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-4 h-4"
+                    />
+                    <span>Geral</span>
+                  </label>
+                </div>
+                {field.value === "Empreendimento" && (
+                  <FormField
+                    control={form.control}
+                    name="ligacaoEmpreendimento"
+                    render={({ field: empreendimentoField }) => (
+                      <FormItem>
+                        <FormLabel>Qual(is) empreendimento(s)? *</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Ex: Empreendimento A, Empreendimento B"
+                            {...empreendimentoField}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <span>Empreendimento</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="Geral"
-                    checked={field.value === "Geral"}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    className="w-4 h-4"
-                  />
-                  <span>Geral</span>
-                </label>
+                )}
               </div>
             </FormControl>
             <FormMessage />
@@ -89,7 +110,8 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
                     className="hidden"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      onChange(files);
+                      const currentFiles = value || [];
+                      onChange([...currentFiles, ...files]);
                     }}
                     {...field}
                   />
@@ -101,7 +123,7 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {value.map((file: File, index: number) => (
-                        <div key={index} className="relative border rounded-lg overflow-hidden aspect-square">
+                        <div key={index} className="relative border rounded-lg overflow-hidden aspect-square group">
                           <img 
                             src={URL.createObjectURL(file)} 
                             alt={file.name}
@@ -110,6 +132,18 @@ export const LigacaoFields = ({ form }: LigacaoFieldsProps) => {
                           <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
                             {file.name}
                           </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => {
+                              const newFiles = value.filter((_: File, i: number) => i !== index);
+                              onChange(newFiles);
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
                       ))}
                     </div>

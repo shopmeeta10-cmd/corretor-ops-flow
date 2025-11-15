@@ -40,6 +40,7 @@ export interface FormData {
   // Ligação
   ligacaoQuantidade?: number;
   ligacaoFoco?: string;
+  ligacaoEmpreendimento?: string;
   ligacaoAnexos?: File[];
   
   // Atendimento

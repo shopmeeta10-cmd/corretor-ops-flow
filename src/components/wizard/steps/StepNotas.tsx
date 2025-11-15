@@ -8,7 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface StepNotasProps {
   form: UseFormReturn<FormData>;
@@ -62,7 +63,8 @@ export const StepNotas = ({ form }: StepNotasProps) => {
                     className="hidden"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      onChange(files);
+                      const currentFiles = value || [];
+                      onChange([...currentFiles, ...files]);
                     }}
                     {...field}
                   />
@@ -74,7 +76,7 @@ export const StepNotas = ({ form }: StepNotasProps) => {
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {value.map((file: File, index: number) => (
-                        <div key={index} className="relative border rounded-lg overflow-hidden aspect-square">
+                        <div key={index} className="relative border rounded-lg overflow-hidden aspect-square group">
                           <img 
                             src={URL.createObjectURL(file)} 
                             alt={file.name}
@@ -83,6 +85,18 @@ export const StepNotas = ({ form }: StepNotasProps) => {
                           <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
                             {file.name}
                           </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => {
+                              const newFiles = value.filter((_: File, i: number) => i !== index);
+                              onChange(newFiles);
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
                       ))}
                     </div>
