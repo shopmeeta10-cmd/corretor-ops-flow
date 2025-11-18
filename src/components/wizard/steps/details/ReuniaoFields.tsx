@@ -50,6 +50,24 @@ export const ReuniaoFields = ({ form }: ReuniaoFieldsProps) => {
           </FormItem>
         )}
       />
+
+      <FormField
+        control={form.control}
+        name="reuniaoParticipantes"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Participantes (opcional)</FormLabel>
+            <FormControl>
+              <Textarea 
+                placeholder="Nome completo ou email dos participantes (um por linha)" 
+                className="min-h-[100px] resize-none"
+                {...field} 
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 };

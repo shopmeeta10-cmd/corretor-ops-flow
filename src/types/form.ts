@@ -60,6 +60,7 @@ export interface FormData {
   // Reunião de alinhamento
   reuniaoPauta?: string;
   reuniaoLocal?: string;
+  reuniaoParticipantes?: string;
   
   // Campos gerais
   dataHora: Date;
