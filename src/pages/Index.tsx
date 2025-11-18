@@ -19,6 +19,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { HelpButton } from "@/components/HelpButton";
 import { Footer } from "@/components/Footer";
 import agendouLogo from "@/assets/agendou-logo.png";
+import { compressImages } from "@/lib/imageCompression";
 
 const TOTAL_STEPS = 7;
 
@@ -53,6 +54,7 @@ const Index = () => {
       conteudoProduto: "",
       reuniaoPauta: "",
       reuniaoLocal: "",
+      reuniaoParticipantes: "",
       notas: "",
     },
   });
@@ -167,6 +169,20 @@ const Index = () => {
     try {
       const formData = form.getValues();
       
+      // Compress images before sending
+      let compressedAnexos: File[] = [];
+      let compressedLigacaoAnexos: File[] = [];
+      
+      if (formData.anexos && formData.anexos.length > 0) {
+        console.log("Comprimindo anexos...");
+        compressedAnexos = await compressImages(formData.anexos);
+      }
+      
+      if (formData.ligacaoAnexos && formData.ligacaoAnexos.length > 0) {
+        console.log("Comprimindo anexos de ligação...");
+        compressedLigacaoAnexos = await compressImages(formData.ligacaoAnexos);
+      }
+      
       // Prepare multipart/form-data for N8N webhook
       const multipartData = new FormData();
       
@@ -182,16 +198,16 @@ const Index = () => {
       
       multipartData.append('data', JSON.stringify(jsonData));
       
-      // Add image files from anexos
-      if (formData.anexos && formData.anexos.length > 0) {
-        formData.anexos.forEach((file: File) => {
+      // Add compressed image files from anexos
+      if (compressedAnexos.length > 0) {
+        compressedAnexos.forEach((file: File) => {
           multipartData.append('anexos', file, file.name);
         });
       }
       
-      // Add image files from ligacaoAnexos
-      if (formData.ligacaoAnexos && formData.ligacaoAnexos.length > 0) {
-        formData.ligacaoAnexos.forEach((file: File) => {
+      // Add compressed image files from ligacaoAnexos
+      if (compressedLigacaoAnexos.length > 0) {
+        compressedLigacaoAnexos.forEach((file: File) => {
           multipartData.append('anexos', file, file.name);
         });
       }

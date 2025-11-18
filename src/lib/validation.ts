@@ -55,6 +55,7 @@ export const formSchema = z.object({
   // Reunião de alinhamento
   reuniaoPauta: z.string().optional(),
   reuniaoLocal: z.string().optional(),
+  reuniaoParticipantes: z.string().optional(),
   
   // Campos gerais
   dataHora: z.date(),
